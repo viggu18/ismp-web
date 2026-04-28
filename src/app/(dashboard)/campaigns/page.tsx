@@ -1,307 +1,195 @@
 'use client';
-import React, { useState } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
+import { CampaignCard, CampaignData } from '@/components/campaigns/CampaignCard';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search, SlidersHorizontal, MapPin, DollarSign, Loader2 } from 'lucide-react';
 import {
-  Plus, Search, Filter, MoreVertical,
-  TrendingUp, Users, Clock, CheckCircle2,
-  XCircle, AlertCircle, BarChart2, ChevronRight
-} from 'lucide-react';
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 
-type CampaignStatus = 'active' | 'draft' | 'completed' | 'paused';
-
-const campaigns = [
+const mockCampaigns: CampaignData[] = [
   {
     id: '1',
-    title: 'Summer Vitality Collection',
-    brand: 'Luxe Fragrances',
-    abbr: 'LF',
-    status: 'active' as CampaignStatus,
-    budget: '$24,000',
-    spent: '$8,400',
-    progress: 35,
-    applicants: 18,
-    hired: 4,
-    deadline: 'Jun 20, 2024',
-    categories: ['Lifestyle', 'Beauty'],
-    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCUmgcNrajZ90f-0P5wIaWyKJzZNW1YRMJp-sP8gU0j3g5tv_bDsatB86nd89WEqi5VmCgPdSvCpi02_OuEAjLU7LDCK72CCZA3OY8wGqzvycXGWnpsLpXKZ5j8UIRInCe1790RVaECDuPNJeltnibmz-lAyGBHlWV8tLbHFI4n3RGREV_1bliSJCoWFQjin231NyXWkh4_fBDr9eHvcks4pJ-8Ej71hr10iEXKkCntaLAHZorSc_tMZjJSHHeS49ipJK5je556Ycki',
+    brandName: 'Nike',
+    brandAvatar: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200&h=200',
+    title: 'Summer Running Collection',
+    description: 'Looking for fitness influencers to showcase our new lightweight summer running gear. Must be able to shoot high-quality outdoor video.',
+    platforms: ['Instagram', 'TikTok'],
+    deliverables: ['1 Reel', '2 Stories'],
+    budget: '$1,000 - $2,500',
+    deadline: 'Aug 15',
   },
   {
     id: '2',
-    title: 'Autumn Minimalist Series',
-    brand: 'Modern Home',
-    abbr: 'MH',
-    status: 'active' as CampaignStatus,
-    budget: '$15,000',
-    spent: '$9,750',
-    progress: 65,
-    applicants: 31,
-    hired: 6,
-    deadline: 'Jul 05, 2024',
-    categories: ['Interior', 'Lifestyle'],
-    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDVUtqjv_vkLzuuiuB8Zai3Uq_rKFAZwdi7K2tM6aCd-3p3gpxXX_m7cZf9jKDnxCw3GTQ94J8N0NnQkqlxFW8X_SSgvO_t7u7GavH4ROesPHm7OgRjVDuZMBWPwZEYQl81REA5UZ5LQYZcCAGySu03SNUUO2LO_5fpgJ1INR-BxjzFHXlGazAf4rn-69IXYGcRWqg4Lq5eVFnueS0pIOUWuK71imVJ1pORpW75JnCrsscjxvChWM6xV1hLlxAAd73IzyW12EHC4JGo',
+    brandName: 'Glossier',
+    title: 'Skincare Routine Feature',
+    description: 'Seeking beauty creators with an engaged audience for an authentic GRWM video featuring our core skincare set.',
+    platforms: ['TikTok', 'YouTube'],
+    deliverables: ['1 Dedicated Video'],
+    budget: '$500 - $1,200',
+    deadline: 'Sep 01',
   },
   {
     id: '3',
-    title: 'Smart Home Unboxing Series',
-    brand: 'Nexus Gear',
-    abbr: 'NG',
-    status: 'draft' as CampaignStatus,
-    budget: '$8,500',
-    spent: '$0',
-    progress: 0,
-    applicants: 0,
-    hired: 0,
-    deadline: 'Aug 15, 2024',
-    categories: ['Tech', 'Review'],
-    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCiV93SsLQ7S37cKmfp8ufDux8eEwJ7soQdRkVbQ4tQjNcYzz28ZW52mqeN00Zz5OpNBrhNPr5hc2P0F9Nsvan8uVDen5AYaRx9LXJ04d7f-hFWpz1TK5UrKvcPfQutcoXxGLy_oVkZhzjBqotmL5E9jEAb4J51470_ztl4uy-eOO9989ISyQRNyHZOufa2Op_P8WSCP5NxpqKp7RsEI13CW8kpmMjAKzQAVCQqx5aJ0_YjzoBeBDFeHUvcD8a4DvIRY3gUJjbUO27s',
+    brandName: 'TechStyle',
+    brandAvatar: 'https://images.unsplash.com/photo-1550009158-9ebf6d250406?auto=format&fit=crop&q=80&w=200&h=200',
+    title: 'New Gadget Unboxing',
+    description: 'We are launching a new smart home device and need tech reviewers to do a comprehensive unboxing and honest review.',
+    platforms: ['YouTube'],
+    deliverables: ['1 Review Video', '1 Short'],
+    budget: '$2,000+',
+    deadline: 'Oct 10',
   },
   {
     id: '4',
-    title: 'Performance Wear Launch',
-    brand: 'Vantage Sportswear',
-    abbr: 'VS',
-    status: 'completed' as CampaignStatus,
-    budget: '$32,000',
-    spent: '$31,200',
-    progress: 100,
-    applicants: 52,
-    hired: 10,
-    deadline: 'May 01, 2024',
-    categories: ['Sports', 'Fashion'],
-    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCCMBr4lRI21US16H_VW9HciVkm-37i4RG7i9gtxBWYxw8DKA95dwHEbNOTtd0wK46TjRGe9ZPDS1wCpzOcW_yRF_4xvOISXzT_FO7jXCz6XHXV99-ZGtayax25wIbMxU55I89yhwsRX4xV5wSKMXZ0C6kBGjKMBZlnEs777k_WWvBhQK5AFoTAQhJhK00CLGJMkhimyYUXTm4PrMTB6Amksja9AP5_uEf31qOeiyu-1rDwNtkgih2D34XltY0fVV2vKQcc3yiKREii',
-  },
-  {
-    id: '5',
-    title: 'Morning Ritual Skincare',
-    brand: 'PureSkin Labs',
-    abbr: 'PL',
-    status: 'paused' as CampaignStatus,
-    budget: '$11,000',
-    spent: '$3,200',
-    progress: 29,
-    applicants: 14,
-    hired: 2,
-    deadline: 'Sep 10, 2024',
-    categories: ['Beauty', 'Wellness'],
-    cover: 'https://lh3.googleusercontent.com/aida-public/AB6AXuARgFLopYdb3h4ARXEn2eT-8UV6SewjmUghN0NvJFyKwaQzmabnkU23Ihrsss7KH60sOl16ItmhbcEZBER18bTFhw9KFYzYuFbg6YwX5-MnElR_SbuchFeWqtwwxKMwYq0-0pCNNSiVZxU_VACc1sAi-lRf4kZ681AXFHuQQwkOvDXKr0fGVK5rqmAWytQZ3nWvzrPN6_NJOdBaz2FoOWE_xsKOq9CPGUCg7tvHh0JZf92WnFydOxYqk0xQz5t4QNHyFy9iRLCosdO3',
+    brandName: 'FreshEats',
+    title: 'Healthy Meal Prep Series',
+    description: 'Partnering with food and lifestyle creators to share simple 15-minute meal prep ideas using our new organic sauces.',
+    platforms: ['Instagram'],
+    deliverables: ['3 Reels'],
+    budget: '$800 - $1,500',
+    location: 'US Only',
   },
 ];
 
-const statusConfig: Record<CampaignStatus, { label: string; color: string; icon: React.ElementType }> = {
-  active:    { label: 'Active',    color: 'bg-secondary/10 text-secondary',          icon: CheckCircle2 },
-  draft:     { label: 'Draft',     color: 'bg-surface-container-highest text-outline', icon: AlertCircle },
-  completed: { label: 'Completed', color: 'bg-primary-soft text-primary',             icon: CheckCircle2 },
-  paused:    { label: 'Paused',    color: 'bg-error-container/40 text-error',          icon: XCircle },
-};
+export default function BrowseCampaignsPage() {
+  const [isLoading, setIsLoading] = useState(true);
 
-const filters: Array<{ key: 'all' | CampaignStatus; label: string }> = [
-  { key: 'all', label: 'All' },
-  { key: 'active', label: 'Active' },
-  { key: 'draft', label: 'Drafts' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'paused', label: 'Paused' },
-];
-
-export default function CampaignsPage() {
-  const [activeFilter, setActiveFilter] = useState<'all' | CampaignStatus>('all');
-  const [search, setSearch] = useState('');
-
-  const filtered = campaigns.filter((c) => {
-    const matchesFilter = activeFilter === 'all' || c.status === activeFilter;
-    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase()) ||
-      c.brand.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
-  const totals = {
-    active: campaigns.filter((c) => c.status === 'active').length,
-    budget: '$90,500',
-    applicants: campaigns.reduce((a, c) => a + c.applicants, 0),
-  };
+  // Simulate network loading
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="p-8 pb-20 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-        <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-on-surface">Campaigns</h1>
-          <p className="text-on-surface-variant mt-1">Manage all your influencer campaigns in one place.</p>
+    <div className="p-6 lg:p-10 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl md:text-4xl font-heading font-black tracking-tight text-slate-900 dark:text-white">Discover Campaigns</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-lg">Find the perfect brand partnerships that match your niche.</p>
         </div>
-        <Link
-          href="/campaigns/new"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-primary to-primary-light text-white rounded-xl font-bold shadow-lg hover:brightness-110 active:scale-95 transition-all text-sm"
-        >
-          <Plus size={18} />
-          Create Campaign
-        </Link>
-      </div>
-
-      {/* Summary Strip */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        {[
-          { LucideIcon: BarChart2, label: 'Active Campaigns', value: totals.active },
-          { LucideIcon: TrendingUp, label: 'Total Budget Allocated', value: totals.budget },
-          { LucideIcon: Users, label: 'Total Applicants', value: totals.applicants },
-        ].map(({ LucideIcon, label, value }, i) => (
-          <div key={i} className="bg-surface-container-lowest rounded-xl px-6 py-5 flex items-center gap-4 shadow-sm border border-outline-variant/10">
-            <div className="w-10 h-10 rounded-lg bg-primary-soft flex items-center justify-center">
-              <LucideIcon size={20} className="text-primary" />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{label}</p>
-              <p className="text-2xl font-extrabold text-on-surface">{value}</p>
-            </div>
+        
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <div className="relative flex-1 md:w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+            <Input 
+              placeholder="Search campaigns..." 
+              className="pl-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 focus-visible:ring-primary/20 h-11"
+            />
           </div>
-        ))}
-      </div>
-
-      {/* Search & Filters */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-outline" />
-          <input
-            className="w-full pl-10 pr-4 py-3 bg-surface-container-lowest border border-outline-variant/20 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 outline-none"
-            placeholder="Search campaigns or brands..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <div className="flex items-center gap-2 bg-surface-container-lowest border border-outline-variant/20 rounded-xl p-1">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => setActiveFilter(f.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
-                activeFilter === f.key
-                  ? 'bg-primary text-white shadow-sm'
-                  : 'text-on-surface-variant hover:bg-surface-container-low'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-        <button className="px-4 py-3 bg-surface-container-lowest border border-outline-variant/20 rounded-xl flex items-center gap-2 text-sm font-bold text-on-surface-variant hover:bg-surface-container-low transition-all outline-none">
-          <Filter size={16} /> Filter
-        </button>
-      </div>
-
-      {/* Campaign Cards Grid */}
-      {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-on-surface-variant">
-          <AlertCircle size={48} className="mb-4 opacity-30" />
-          <p className="font-bold text-lg">No campaigns found</p>
-          <p className="text-sm">Try adjusting your search or filter.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filtered.map((campaign) => {
-            const { label, color, icon: StatusIcon } = statusConfig[campaign.status];
-            return (
-              <div
-                key={campaign.id}
-                className="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm border border-outline-variant/10 hover:shadow-xl hover:border-primary/20 transition-all duration-300 group flex flex-col"
-              >
-                {/* Cover */}
-                <div className="relative h-40 overflow-hidden">
-                  <img
-                    src={campaign.cover}
-                    alt={campaign.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute top-3 right-3 flex gap-2">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 backdrop-blur-sm ${color} bg-white/90`}>
-                      <StatusIcon size={10} />
-                      {label}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-3 left-4 flex items-center gap-2">
-                    <div className="w-8 h-8 rounded bg-white/20 backdrop-blur-sm flex items-center justify-center font-bold text-white text-xs border border-white/30">
-                      {campaign.abbr}
-                    </div>
-                    <span className="text-white text-xs font-semibold">{campaign.brand}</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-bold text-lg text-on-surface group-hover:text-primary transition-colors leading-tight mb-3">
-                    {campaign.title}
-                  </h3>
-
-                  {/* Categories */}
-                  <div className="flex gap-2 mb-4 flex-wrap">
-                    {campaign.categories.map((cat) => (
-                      <span key={cat} className="px-2 py-0.5 bg-surface-container text-on-surface-variant text-[10px] font-bold rounded-full uppercase tracking-wider">
-                        {cat}
-                      </span>
+          
+          <Sheet>
+            <SheetTrigger render={
+              <Button variant="outline" className="h-11 px-4 gap-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800">
+                <SlidersHorizontal size={16} />
+                <span className="hidden sm:inline">Filters</span>
+              </Button>
+            } />
+            <SheetContent className="w-full sm:max-w-md bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl">
+              <SheetHeader className="text-left space-y-1 pb-6 border-b border-slate-200 dark:border-slate-800">
+                <SheetTitle className="text-2xl font-black font-heading">Filter Campaigns</SheetTitle>
+                <SheetDescription>
+                  Narrow down your search to find the perfect fit.
+                </SheetDescription>
+              </SheetHeader>
+              <div className="py-6 space-y-8">
+                <div className="space-y-4">
+                  <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500">Platform</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {['Instagram', 'YouTube', 'TikTok', 'X', 'LinkedIn'].map(p => (
+                      <Badge key={p} variant="outline" className="cursor-pointer hover:bg-primary hover:text-white transition-colors py-1.5 px-3">{p}</Badge>
                     ))}
                   </div>
-
-                  {/* Progress */}
-                  {campaign.status !== 'draft' && (
-                    <div className="mb-4">
-                      <div className="flex justify-between text-[10px] font-bold text-on-surface-variant uppercase tracking-wider mb-1.5">
-                        <span>Budget Used</span>
-                        <span>{campaign.progress}%</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${campaign.status === 'completed' ? 'bg-secondary' : 'bg-primary'}`}
-                          style={{ width: `${campaign.progress}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between text-[10px] text-on-surface-variant mt-1">
-                        <span>{campaign.spent} spent</span>
-                        <span>{campaign.budget} total</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Stats row */}
-                  <div className="grid grid-cols-3 gap-2 mb-5 pt-3 border-t border-outline-variant/10">
-                    <div className="text-center">
-                      <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Budget</p>
-                      <p className="font-bold text-sm text-on-surface">{campaign.budget}</p>
-                    </div>
-                    <div className="text-center border-x border-outline-variant/10">
-                      <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider flex items-center justify-center gap-1">
-                        <Users size={9} /> Applied
-                      </p>
-                      <p className="font-bold text-sm text-on-surface">{campaign.applicants}</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider flex items-center justify-center gap-1">
-                        <Clock size={9} /> Deadline
-                      </p>
-                      <p className="font-bold text-xs text-on-surface">{campaign.deadline}</p>
-                    </div>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500">Minimum Budget</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['$100+', '$500+', '$1,000+', '$5,000+'].map(b => (
+                      <Button key={b} variant="outline" className="justify-start text-muted-foreground">{b}</Button>
+                    ))}
                   </div>
-
-                  {/* Actions */}
-                  <div className="mt-auto flex gap-2">
-                    <Link
-                      href={`/campaigns/${campaign.id}`}
-                      className="flex-1 py-2.5 text-center text-xs font-bold border border-outline-variant/30 rounded-lg text-on-surface hover:bg-surface-container-low transition-all"
-                    >
-                      View Brief
-                    </Link>
-                    <Link
-                      href={`/campaigns/${campaign.id}/negotiate`}
-                      className="flex-1 py-2.5 text-center text-xs font-bold bg-gradient-to-br from-primary to-primary-light text-white rounded-lg shadow-sm hover:brightness-110 transition-all flex items-center justify-center gap-1"
-                    >
-                      Negotiate <ChevronRight size={12} />
-                    </Link>
-                    <button className="p-2.5 border border-outline-variant/30 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-all outline-none">
-                      <MoreVertical size={14} />
-                    </button>
+                </div>
+                <div className="space-y-4">
+                  <h3 className="font-bold text-sm uppercase tracking-wider text-slate-500">Niche</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {['Fashion', 'Beauty', 'Tech', 'Fitness', 'Food', 'Travel', 'Finance', 'Lifestyle'].map(p => (
+                      <Badge key={p} variant="secondary" className="cursor-pointer hover:bg-secondary/80 transition-colors py-1.5 px-3 bg-secondary/10 text-secondary">{p}</Badge>
+                    ))}
                   </div>
                 </div>
               </div>
-            );
-          })}
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex gap-3">
+                <Button variant="outline" className="flex-1">Reset</Button>
+                <Button className="flex-1">Apply Filters</Button>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
+      </div>
+
+      {/* Categories / Quick Filters */}
+      <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+        {['All', 'Fashion', 'Beauty', 'Tech', 'Fitness', 'Food', 'Travel'].map((cat, i) => (
+          <Button 
+            key={cat} 
+            variant={i === 0 ? "default" : "secondary"} 
+            className={`rounded-full px-5 transition-all ${i === 0 ? 'bg-primary hover:bg-primary-light text-primary-foreground font-bold shadow-md shadow-primary/20' : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium text-slate-600 dark:text-slate-300'}`}
+          >
+            {cat}
+          </Button>
+        ))}
+      </div>
+
+      {/* Campaign Grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="flex flex-col space-y-3 bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 h-[320px]">
+              <div className="flex gap-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-[100px]" />
+                  <Skeleton className="h-6 w-[200px]" />
+                </div>
+              </div>
+              <Skeleton className="h-[80px] w-full mt-4" />
+              <div className="flex gap-2 mt-4">
+                <Skeleton className="h-6 w-[80px] rounded-full" />
+                <Skeleton className="h-6 w-[80px] rounded-full" />
+              </div>
+              <div className="mt-auto flex justify-between">
+                <Skeleton className="h-8 w-[100px]" />
+                <Skeleton className="h-8 w-[100px]" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        mockCampaigns.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
+            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+              <Search className="h-8 w-8 text-slate-400" />
+            </div>
+            <h3 className="text-xl font-bold font-heading text-slate-900 dark:text-white mb-2">No campaigns found</h3>
+            <p className="text-slate-500 max-w-md">We couldn't find any campaigns matching your current filters. Try adjusting your search criteria.</p>
+            <Button variant="outline" className="mt-6">Clear all filters</Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {mockCampaigns.map((campaign) => (
+              <CampaignCard key={campaign.id} campaign={campaign} />
+            ))}
+          </div>
+        )
       )}
     </div>
   );

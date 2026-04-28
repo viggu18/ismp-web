@@ -1,13 +1,15 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Search, Layers, BarChart2, Wallet,
-  Mail, ShieldCheck, Settings, HelpCircle, LogOut,
-  Compass, Briefcase, TrendingUp, Star, ArrowLeftRight,
-  UserCircle2
+  Mail, ShieldCheck, HelpCircle, LogOut,
+  Compass, Briefcase, TrendingUp,
+  UserCircle2, ArrowLeftRight
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/store/authStore';
 
 type NavItem = { href: string; label: string; icon: React.ElementType };
 
@@ -19,7 +21,6 @@ const hirerNav: NavItem[] = [
   { href: '/earnings',     label: 'Earnings',     icon: Wallet          },
   { href: '/messages',     label: 'Messages',     icon: Mail            },
   { href: '/verification', label: 'Verification', icon: ShieldCheck     },
-  { href: '/settings',     label: 'Settings',     icon: Settings        },
 ];
 
 const influencerNav: NavItem[] = [
@@ -31,50 +32,67 @@ const influencerNav: NavItem[] = [
   { href: '/messages',     label: 'Messages',     icon: Mail            },
   { href: '/verification', label: 'Verification', icon: ShieldCheck     },
   { href: '/profile',      label: 'My Profile',   icon: UserCircle2     },
-  { href: '/settings',     label: 'Settings',     icon: Settings        },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [role, setRole] = useState<'hirer' | 'influencer'>('hirer');
+  const router = useRouter();
+  const { user, logout } = useAuth();
 
-  const isHirer = role === 'hirer';
+  const isHirer = user?.role === 'HIRER';
   const nav = isHirer ? hirerNav : influencerNav;
 
+  function handleLogout() {
+    logout();
+    router.push('/login');
+  }
+
   return (
-    <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 z-50 bg-slate-50 dark:bg-slate-950 p-4 border-r border-slate-200 dark:border-slate-800 font-manrope text-sm font-medium">
+    <aside className="hidden md:flex flex-col h-screen w-64 fixed left-0 top-0 z-50 bg-white/60 dark:bg-slate-950/60 backdrop-blur-2xl p-4 border-r border-slate-200/60 dark:border-slate-800/60 font-sans text-sm font-medium shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
       {/* Logo + role pill */}
-      <div className="mb-8 px-2">
-        <h1 className="text-lg font-black text-primary tracking-tighter">Editorial Hub</h1>
-        <div className="flex items-center gap-2 mt-1">
-          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider transition-colors ${
+      <div className="mb-8 px-2 mt-2">
+        <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tighter flex items-center gap-2">
+          <div className="w-6 h-6 rounded bg-primary flex items-center justify-center">
+            <span className="text-white text-xs font-bold">IH</span>
+          </div>
+          InfluencerHub
+        </h1>
+        <div className="flex items-center gap-2 mt-3">
+          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-md uppercase tracking-wider transition-colors ${
             isHirer
-              ? 'bg-primary/10 text-primary'
-              : 'bg-secondary/10 text-secondary'
+              ? 'bg-primary/10 text-primary border border-primary/20'
+              : 'bg-secondary/10 text-secondary border border-secondary/20'
           }`}>
             {isHirer ? 'Hirer' : 'Influencer'}
           </span>
-          <span className="text-xs text-slate-400 font-normal">Premium Marketplace</span>
+          <span className="text-xs text-slate-400 font-normal">Workspace</span>
         </div>
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 space-y-1 overflow-y-auto custom-scrollbar pr-1">
         {nav.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || (href !== '/' && pathname.startsWith(href));
           return (
             <Link
               key={href}
               href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${
-                active
-                  ? 'bg-white dark:bg-slate-900 text-primary shadow-sm font-bold'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 hover:translate-x-0.5'
-              }`}
+              className="relative flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-200 group"
             >
-              <Icon size={18} className={active ? 'text-primary' : ''} />
-              <span>{label}</span>
-              {active && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-primary" />}
+              {active && (
+                <motion.div 
+                  layoutId="active-nav-bg"
+                  className="absolute inset-0 bg-white dark:bg-slate-800 rounded-md shadow-sm border border-slate-200/50 dark:border-slate-700/50"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+              <div className="relative flex items-center gap-3 w-full z-10">
+                <Icon size={18} className={active ? 'text-primary stroke-[2.5px]' : 'text-slate-500 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors'} />
+                <span className={active ? 'text-slate-900 dark:text-white font-semibold' : 'text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-200 transition-colors'}>
+                  {label}
+                </span>
+              </div>
             </Link>
           );
         })}
@@ -82,35 +100,18 @@ export function Sidebar() {
 
       {/* Bottom section */}
       <div className="mt-auto space-y-4 pt-4">
-        {/* Role toggle button */}
-        <button
-          onClick={() => setRole(isHirer ? 'influencer' : 'hirer')}
-          className={`w-full py-3 rounded-xl text-xs font-bold tracking-wider shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 ${
-            isHirer
-              ? 'bg-gradient-to-br from-secondary to-secondary/80 text-white'
-              : 'bg-gradient-to-br from-primary to-primary-light text-white'
-          }`}
-        >
-          <ArrowLeftRight size={14} />
-          {isHirer ? 'Switch to Influencer' : 'Switch to Hirer'}
-        </button>
-
-        {/* Role context label */}
-        <p className="text-center text-[10px] text-slate-400 font-medium -mt-2">
-          {isHirer
-            ? 'Viewing as: Brand / Agency'
-            : 'Viewing as: Content Creator'}
-        </p>
-
-        <div className="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-0.5">
-          <div className="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer active:scale-95 transition-all">
+        <div className="pt-3 border-t border-slate-200/60 dark:border-slate-800/60 space-y-1">
+          <div className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-all">
             <HelpCircle size={18} />
             <span>Help Center</span>
           </div>
-          <div className="text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer active:scale-95 transition-all">
+          <button
+            onClick={handleLogout}
+            className="w-full text-left text-slate-600 dark:text-slate-400 hover:text-error hover:bg-error/10 flex items-center gap-3 px-3 py-2.5 rounded-md cursor-pointer transition-all"
+          >
             <LogOut size={18} />
             <span>Log Out</span>
-          </div>
+          </button>
         </div>
       </div>
     </aside>

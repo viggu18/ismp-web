@@ -1,5 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-primary: #ec5b13;
@@ -11,6 +14,8 @@
   --color-text-primary: #1e293b;
   --color-text-secondary: #64748b;
   --color-text-muted: #94a3b8;
+  --color-border: #f1f5f9;
+  --color-border-medium: #e2e8f0;
   --color-border: #f1f5f9;
   --color-border-medium: #e2e8f0;
   --color-success: #16a34a;
@@ -65,19 +70,20 @@
   --color-on-error-container: #93000a;
   --color-on-error: #ffffff;
 
-  --font-manrope: "Manrope", sans-serif;
-  --font-headline: var(--font-manrope);
-  --font-body: var(--font-manrope);
-  --font-label: var(--font-manrope);
+  --font-sans: "Inter", sans-serif;
+  --font-heading: "Outfit", sans-serif;
 }
 
 @layer base {
   body {
-    background-color: var(--color-background);
-    color: var(--color-on-surface);
-    font-family: var(--font-manrope);
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
 
   .custom-scrollbar::-webkit-scrollbar {
     width: 4px;
@@ -89,4 +95,157 @@
     background: var(--color-border-medium);
     border-radius: 10px;
   }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@theme inline {
+  --font-heading: var(--font-heading);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Brand — orange primary, emerald secondary */
+  --primary:            #ec5b13;
+  --primary-foreground: #ffffff;
+  --secondary:          #f0faf5;
+  --secondary-foreground: #1b6b51;
+
+  /* Surfaces */
+  --background:         #f8f6f6;
+  --foreground:         #1e293b;
+  --card:               #ffffff;
+  --card-foreground:    #1e293b;
+  --popover:            #ffffff;
+  --popover-foreground: #1e293b;
+
+  /* UI chrome */
+  --muted:              #f1f5f9;
+  --muted-foreground:   #64748b;
+  --accent:             rgba(236, 91, 19, 0.08);
+  --accent-foreground:  #ec5b13;
+  --destructive:        #dc2626;
+  --border:             #e2e8f0;
+  --input:              #e2e8f0;
+  --ring:               #ec5b13;
+
+  /* Charts */
+  --chart-1: #ec5b13;
+  --chart-2: #1b6b51;
+  --chart-3: #f59e0b;
+  --chart-4: #3b82f6;
+  --chart-5: #8b5cf6;
+
+  /* Radius */
+  --radius: 0.75rem;
+
+  /* Sidebar */
+  --sidebar:                    #ffffff;
+  --sidebar-foreground:         #1e293b;
+  --sidebar-primary:            #ec5b13;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent:             rgba(236, 91, 19, 0.08);
+  --sidebar-accent-foreground:  #ec5b13;
+  --sidebar-border:             #e2e8f0;
+  --sidebar-ring:               #ec5b13;
+}
+
+.dark {
+  /* Brand stays vivid in dark */
+  --primary:            #ff6a1f;
+  --primary-foreground: #ffffff;
+  --secondary:          #0f2e22;
+  --secondary-foreground: #6ee7b7;
+
+  /* Surfaces */
+  --background:         #0f1117;
+  --foreground:         #f1f5f9;
+  --card:               #1a1f2e;
+  --card-foreground:    #f1f5f9;
+  --popover:            #1a1f2e;
+  --popover-foreground: #f1f5f9;
+
+  /* UI chrome */
+  --muted:              #1e2433;
+  --muted-foreground:   #94a3b8;
+  --accent:             rgba(255, 106, 31, 0.12);
+  --accent-foreground:  #ff6a1f;
+  --destructive:        #ef4444;
+  --border:             rgba(255,255,255,0.08);
+  --input:              rgba(255,255,255,0.10);
+  --ring:               #ff6a1f;
+
+  /* Charts */
+  --chart-1: #ff6a1f;
+  --chart-2: #34d399;
+  --chart-3: #fbbf24;
+  --chart-4: #60a5fa;
+  --chart-5: #a78bfa;
+
+  /* Sidebar */
+  --sidebar:                    #131720;
+  --sidebar-foreground:         #f1f5f9;
+  --sidebar-primary:            #ff6a1f;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent:             rgba(255, 106, 31, 0.12);
+  --sidebar-accent-foreground:  #ff6a1f;
+  --sidebar-border:             rgba(255,255,255,0.06);
+  --sidebar-ring:               #ff6a1f;
+}
+
+/* Dark-mode overrides for the @theme custom tokens */
+.dark {
+  --color-background:              #0f1117;
+  --color-surface:                 #1a1f2e;
+  --color-on-surface:              #f1f5f9;
+  --color-on-surface-variant:      #94a3b8;
+  --color-surface-container-lowest:#131720;
+  --color-surface-container-low:   #1a1f2e;
+  --color-surface-container:       #1e2433;
+  --color-surface-container-high:  #242938;
+  --color-surface-container-highest: #2a2f3e;
+  --color-outline-variant:         rgba(255,255,255,0.08);
+  --color-primary:                 #ff6a1f;
+  --color-primary-soft:            rgba(255, 106, 31, 0.12);
+  --color-secondary:               #34d399;
+  --color-error:                   #ef4444;
 }
