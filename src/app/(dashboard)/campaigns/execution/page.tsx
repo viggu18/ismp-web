@@ -1,4 +1,5 @@
 import React from 'react';
+import { MdCheckCircle, MdPending, MdHistory, MdFullscreen, MdDownload, MdLink, MdOpenInNew, MdUploadFile, MdSend, MdVerified, MdAssignmentReturn, MdCalendarToday } from 'react-icons/md';
 
 export default function ContentExecutionPage() {
   return (
@@ -10,7 +11,7 @@ export default function ContentExecutionPage() {
           <div className="flex flex-col gap-3">
             <div className="h-1.5 w-full bg-primary rounded-full"></div>
             <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
-              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+              <MdCheckCircle className="text-sm" />
               Content Creation
             </div>
           </div>
@@ -18,7 +19,7 @@ export default function ContentExecutionPage() {
           <div className="flex flex-col gap-3">
             <div className="h-1.5 w-full bg-primary rounded-full"></div>
             <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
-              <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+              <MdCheckCircle className="text-sm" />
               Draft Submitted
             </div>
           </div>
@@ -26,7 +27,7 @@ export default function ContentExecutionPage() {
           <div className="flex flex-col gap-3">
             <div className="h-1.5 w-full bg-gradient-to-r from-primary to-primary-light rounded-full"></div>
             <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
-              <span className="material-symbols-outlined text-sm">pending</span>
+              <MdPending className="text-sm" />
               Feedback
             </div>
           </div>
@@ -58,7 +59,7 @@ export default function ContentExecutionPage() {
                 <h2 className="text-3xl font-extrabold tracking-tight text-on-surface">Submission #02</h2>
               </div>
               <button className="text-primary text-sm font-semibold hover:underline flex items-center gap-1">
-                <span className="material-symbols-outlined text-lg">history</span> View History
+                <MdHistory className="text-lg" /> View History
               </button>
             </div>
 
@@ -67,30 +68,30 @@ export default function ContentExecutionPage() {
               <img alt="Content Draft Preview" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaIywZRIX8w3woexQJKpSKppMRzIvx4OXBQUa5Y5OnYAnCPzfaatwulWFhAsX85PlMPn6htc22i3g7AL8gHl4Cfm0K43nupMsY3RfCvNzOkVClAdtewlvgM1V53CwyOR6moQ9OyYsbQ7HlZ-2Bbt68IxBArOhhJpK0WeGRuUcCT8pV3vtO-_F-k2eXIlAt6vs3X2p1WtsP03ymnyEYnh69Wd9IDW3Eb9Jl9z85lEj0XOCRBbM34Rwygc5e15VjCdkdUgVOBwCPADsE" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                 <button className="bg-white/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/40 transition-colors">
-                  <span className="material-symbols-outlined">fullscreen</span>
+                  <MdFullscreen />
                 </button>
                 <button className="bg-white/20 backdrop-blur-md text-white p-3 rounded-full hover:bg-white/40 transition-colors">
-                  <span className="material-symbols-outlined">download</span>
+                  <MdDownload />
                 </button>
               </div>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center gap-4 p-4 bg-surface-container rounded-lg">
-                <span className="material-symbols-outlined text-primary text-2xl">link</span>
+                <MdLink className="text-primary text-2xl" />
                 <div className="flex-1">
                   <p className="text-xs font-bold text-slate-500 uppercase">External Link Reference</p>
                   <p className="text-sm font-medium text-primary">instagram.com/p/C_m92kLoX2...</p>
                 </div>
                 <button className="text-on-surface hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined">open_in_new</span>
+                  <MdOpenInNew />
                 </button>
               </div>
 
               {/* Influencer Submission Controls */}
               <div className="pt-4 flex gap-4">
                 <button className="flex-1 py-3 border-2 border-dashed border-outline-variant rounded-xl text-slate-500 font-semibold text-sm hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined">upload_file</span> Update Content
+                  <MdUploadFile /> Update Content
                 </button>
                 <button className="px-6 py-3 bg-slate-100 text-on-surface-variant font-semibold text-sm rounded-xl hover:bg-slate-200 transition-colors">
                   Preview All Assets
@@ -140,7 +141,7 @@ export default function ContentExecutionPage() {
                 <div className="relative">
                   <textarea className="w-full bg-surface-container-high border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-primary h-24 resize-none outline-none" placeholder="Write feedback..."></textarea>
                   <button className="absolute bottom-3 right-3 p-2 bg-gradient-to-br from-primary to-primary-light text-white rounded-lg hover:opacity-90 transition-opacity">
-                    <span className="material-symbols-outlined text-sm">send</span>
+                    <MdSend className="text-sm" />
                   </button>
                 </div>
               </div>
@@ -152,18 +153,18 @@ export default function ContentExecutionPage() {
             <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-6">Manager Actions</h3>
             <div className="space-y-4">
               <button className="w-full bg-gradient-to-br from-primary to-primary-light text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-3 shadow-lg active:scale-95 transition-transform">
-                <span className="material-symbols-outlined">verified</span>
+                <MdVerified />
                 Approve for Publishing
               </button>
               <button className="w-full bg-error-container/20 text-error font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-3 hover:bg-error-container/40 transition-colors">
-                <span className="material-symbols-outlined">assignment_return</span>
+                <MdAssignmentReturn />
                 Request Revision
               </button>
             </div>
 
             <div className="pt-6 border-t border-slate-100 mt-6">
               <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-slate-400 text-lg">calendar_today</span>
+                <MdCalendarToday className="text-slate-400 text-lg" />
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-tight">Campaign Deadline</span>
               </div>
               <p className="text-lg font-extrabold text-on-surface">September 28, 2024</p>

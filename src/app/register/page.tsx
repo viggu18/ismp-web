@@ -176,7 +176,7 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       await register(role as UserRole, fields.phone, fields.email, fields.password);
-      router.push('/');
+      router.push('/onboarding');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
       setLoading(false);
